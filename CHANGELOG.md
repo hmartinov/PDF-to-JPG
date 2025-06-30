@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - "all" keyword to export entire PDF in one go
 - Page validation and error messaging for invalid selections
 - Clean structured output in `page-<num>.jpg` format
+- Automatic version checking and self-updating via GitHub
 
 ### Fixed
 - Prevented re-export of existing pages
