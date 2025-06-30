@@ -11,40 +11,45 @@ Designed for **Linux (Lubuntu/XFCE)** environments and optimized for office use 
 - Handles invalid page numbers gracefully
 - Shows **graphical input prompts** via `zenity`
 - Displays **live export log** via `yad`
+- Automatically checks for new version and updates from GitHub
 - Auto-closes when done — no terminal needed
 - Works from **right-click menu on PDF files**
 
-##  Requirements
+## Requirements
 
 Ensure the following packages are installed:
 
 ```bash
-sudo apt install zenity poppler-utils yad
+sudo apt install zenity poppler-utils yad curl
 ```
 
 ## Installation
 
-1. **Copy the script** to a safe path like:  
-   `~/bin/pdf_to_jpg.sh`
-
-2. **Make it executable:**
+1. **Download or clone the repository:**
 
 ```bash
-chmod +x ~/bin/pdf_to_jpg.sh
+git clone https://github.com/hmartinov/PDF-to-JPG.git
+cd PDF-to-JPG
 ```
 
-3. **(Optional)** Add a `.desktop` file to integrate it into the file manager’s right-click menu.
+2. **Make the installation script executable and run it:**
+
+```bash
+chmod +x install.sh
+./install.sh
+```
+
+The script will:
+- Automatically install required tools (`zenity`, `yad`, `pdftoppm`, `pdfinfo`, `curl`)
+- Copy the main script to `~/bin/`
+- Register `.desktop` launcher so the tool appears in the right-click menu for PDF files
 
 ## Output
 
 - Images are saved in a folder named like the PDF:  
-  `/path/to/YourFile_pdf/page-1.jpg`, `page-2.jpg`, ...
+  `/home/user/Documents/File.pdf/File/page-1.jpg`, `page-2.jpg`, ...
 
 - Already existing images are skipped to avoid re-exporting.
-
-## Auto-updates (coming soon)
-
-The script will soon support **automatic version checking and self-updating** via GitHub.
 
 ## Example usage
 
@@ -65,7 +70,7 @@ Get the latest version from the [release](https://github.com/hmartinov/PDF-to-JP
 
 ## Changelog
 
-See the full list of changes in the [CHANGElOG.md](./CHANGELOG.md) file.
+See full release history in the [CHANGELOG.md](./CHANGELOG.md) file.
 
 ## License
 
@@ -79,4 +84,4 @@ H. Martinov
 
 ---
 
-_See instructions and details in the app menu._
+_See instructions and update info directly in the app menu._
