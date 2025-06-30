@@ -1,8 +1,36 @@
 #!/bin/bash
 
+VERSION="1.1"
+REPO_URL="https://raw.githubusercontent.com/hmartinov/PDF-to-JPG/main"
+SCRIPT_URL="https://github.com/hmartinov/PDF-to-JPG/releases/latest/download/pdf_to_jpg.sh"
+SCRIPT_PATH="$HOME/bin/pdf_to_jpg.sh"
+
+# Проверка за нова версия
+REPO_URL="https://raw.githubusercontent.com/hmartinov/PDF-to-JPG/main"
+REMOTE_VERSION=$(curl -fs "$REPO_URL/version.txt" 2>/dev/null | tr -d '\r\n ')
+
+if [[ -n "$REMOTE_VERSION" && "$REMOTE_VERSION" != "$VERSION" ]]; then
+    zenity --question \
+        --title="Налична е нова версия" \
+        --text="Имате версия $VERSION.\nНалична е нова версия: $REMOTE_VERSION\n\nИскате ли да я изтеглите сега?"
+    if [[ $? -eq 0 ]]; then
+        TMPFILE=$(mktemp)
+        if curl -fsSL "$SCRIPT_URL" -o "$TMPFILE"; then
+            mv "$TMPFILE" "$SCRIPT_PATH"
+            chmod +x "$SCRIPT_PATH"
+            zenity --info --title="Обновено" --text="Скриптът беше обновен успешно до версия $REMOTE_VERSION."
+            exec "$SCRIPT_PATH" "$@"
+            exit 0
+        else
+            zenity --error --title="Грешка" --text="Неуспешно изтегляне на новата версия."
+            rm -f "$TMPFILE"
+        fi
+    fi
+fi
+
 # Проверка за налични зависимости
 MISSING=()
-REQUIRED=("pdftoppm" "pdfinfo" "zenity" "yad")
+REQUIRED=("pdftoppm" "pdfinfo" "zenity" "yad" "curl")
 
 for cmd in "${REQUIRED[@]}"; do
     if ! command -v "$cmd" >/dev/null 2>&1; then
