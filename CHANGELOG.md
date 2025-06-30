@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [1.1.0] – 2024-06-27  
+## [1.1] – 2024-06-27  
 ### Added
 - Live log window during export using `yad`
 - Automatic detection and skipping of already exported pages
@@ -20,7 +20,7 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [1.0.0] – 2024-06-25  
+## [1.0] – 2024-06-25  
 ### Initial release
 - Extract selected PDF pages as JPG
 - Simple GUI input using `zenity`
