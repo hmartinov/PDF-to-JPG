@@ -27,7 +27,7 @@ if [[ -n "$REMOTE_VERSION" && "$REMOTE_VERSION" != "$VERSION" ]]; then
     fi
 fi
 
-# Проверка за налични зависимости
+# Проверка за зависимости
 MISSING=()
 REQUIRED=("pdftoppm" "pdfinfo" "zenity" "yad" "curl")
 
@@ -44,16 +44,18 @@ fi
 
 FILE="$1"
 
-# Проверка дали файлът е PDF
 if [[ "${FILE##*.}" != "pdf" ]]; then
-    zenity --error --title="Грешен формат" --text="Избраният файл не е PDF файл."; exit 1;
+    zenity --error --title="Грешен формат" --text="Избраният файл не е PDF файл."
+    exit 1
 fi
 
 TOTAL=$(pdfinfo "$FILE" | grep "Pages" | awk '{print $2}')
 
 PAGES=$(zenity --entry --title="PDF към JPG" --text="Страници за експортиране (напр. 1-3,5,7 или all):")
+PAGES=$(echo "$PAGES" | tr -d '[:space:]')  # премахва интервали
+
 if [[ -z "$PAGES" ]]; then
-    exit 0
+    PAGES="all"
 fi
 
 group_ranges() {
@@ -110,7 +112,6 @@ EXPORTED=0
 SKIPPED=()
 INVALID=()
 
-# YAD лог чрез именован pipe
 LOG_PIPE="/tmp/pdf_export_log_$$"
 mkfifo "$LOG_PIPE"
 
@@ -121,7 +122,6 @@ yad --title="Експортиране на PDF страници" \
     --center \
     --tail < "$LOG_PIPE" &
 LOG_PID=$!
-
 exec 3> "$LOG_PIPE"
 
 for i in "${PAGE_LIST[@]}"; do
@@ -130,24 +130,26 @@ for i in "${PAGE_LIST[@]}"; do
         if [[ -f "$OUTFILE" ]]; then
             SKIPPED+=("$i")
         else
-            pdftoppm -jpeg -f "$i" -l "$i" "$FILE" "$OUTPUT_DIR/tmp_page" >/dev/null 2>&1
-            mv "${OUTPUT_DIR}/tmp_page-${i}.jpg" "$OUTFILE"
-            echo "$OUTFILE" >&3
-            ((EXPORTED++))
+            pdftoppm -jpeg -singlefile -f "$i" -l "$i" "$FILE" "$OUTPUT_DIR/tmp_page" >/dev/null 2>&1
+            if [[ -f "${OUTPUT_DIR}/tmp_page.jpg" ]]; then
+                mv "${OUTPUT_DIR}/tmp_page.jpg" "$OUTFILE"
+                echo "$OUTFILE" >&3
+                ((EXPORTED++))
+            else
+                echo "❌ Неуспех при извличане на страница $i" >&3
+            fi
         fi
     else
         INVALID+=("$i")
     fi
 done
 
-# Затваряне на лог прозореца
-exec 3>&-         # затвори pipe-а (край на писане)
-sleep 0.5         # малка пауза, за да завърши визуализацията
+exec 3>&-
+sleep 0.5
 kill "$LOG_PID" 2>/dev/null
 wait "$LOG_PID" 2>/dev/null
 rm -f "$LOG_PIPE"
 
-# Специално съобщение ако е само 1 и съществува
 if [[ "$PAGES" =~ ^[0-9]+$ ]] && [[ "${#SKIPPED[@]}" -eq 1 ]] && [[ "$EXPORTED" -eq 0 ]]; then
     zenity --info --title="Информация" --text="ℹ️ Страница $PAGES съществува и не е извлечена."
     exit 0
@@ -157,7 +159,6 @@ RANGE_ALL=$(group_ranges "${PAGE_LIST[@]}")
 RANGE_SKIPPED=$(group_ranges "${SKIPPED[@]}")
 RANGE_INVALID=$(group_ranges "${INVALID[@]}")
 
-# Финални съобщения
 if (( EXPORTED > 0 )); then
     MSG="📤 Обработени страници: $RANGE_ALL\n\n📁 Файловете се намират в:\n$OUTPUT_DIR"
     if (( ${#SKIPPED[@]} > 0 )); then
