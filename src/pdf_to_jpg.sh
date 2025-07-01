@@ -6,7 +6,6 @@ SCRIPT_URL="https://github.com/hmartinov/PDF-to-JPG/releases/latest/download/pdf
 SCRIPT_PATH="$HOME/bin/pdf_to_jpg.sh"
 
 # Проверка за нова версия
-REPO_URL="https://raw.githubusercontent.com/hmartinov/PDF-to-JPG/main"
 REMOTE_VERSION=$(curl -fs "$REPO_URL/version.txt" 2>/dev/null | tr -d '\r\n ')
 
 if [[ -n "$REMOTE_VERSION" && "$REMOTE_VERSION" != "$VERSION" ]]; then
