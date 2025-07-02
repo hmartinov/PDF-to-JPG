@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="1.1"
+VERSION="1.1.1"
 REPO_URL="https://raw.githubusercontent.com/hmartinov/PDF-to-JPG/main"
 SCRIPT_URL="https://github.com/hmartinov/PDF-to-JPG/releases/latest/download/pdf_to_jpg.sh"
 SCRIPT_PATH="$HOME/bin/pdf_to_jpg.sh"
@@ -8,7 +8,19 @@ SCRIPT_PATH="$HOME/bin/pdf_to_jpg.sh"
 # Проверка за нова версия
 REMOTE_VERSION=$(curl -fs "$REPO_URL/version.txt" 2>/dev/null | tr -d '\r\n ')
 
-if [[ -n "$REMOTE_VERSION" && "$REMOTE_VERSION" != "$VERSION" ]]; then
+version_is_newer() {
+    local IFS=.
+    local i ver1=($1) ver2=($2)
+    for ((i=${#ver1[@]}; i<${#ver2[@]}; i++)); do ver1[i]=0; done
+    for ((i=${#ver2[@]}; i<${#ver1[@]}; i++)); do ver2[i]=0; done
+    for ((i=0; i<${#ver1[@]}; i++)); do
+        if ((10#${ver2[i]} > 10#${ver1[i]})); then return 0; fi
+        if ((10#${ver2[i]} < 10#${ver1[i]})); then return 1; fi
+    done
+    return 1  # equal versions
+}
+
+if [[ -n "$REMOTE_VERSION" ]] && version_is_newer "$VERSION" "$REMOTE_VERSION"; then
     zenity --question \
         --title="Налична е нова версия" \
         --text="Имате версия $VERSION.\nНалична е нова версия: $REMOTE_VERSION\n\nИскате ли да я изтеглите сега?"
@@ -44,14 +56,19 @@ fi
 
 FILE="$1"
 
-if [[ "${FILE##*.}" != "pdf" ]]; then
-    zenity --error --title="Грешен формат" --text="Избраният файл не е PDF файл."
+if ! head -c 4 "$FILE" | grep -q "%PDF"; then 
+    zenity --error --title="Грешен формат" --text="Файлът не е валиден PDF документ."
     exit 1
 fi
 
 TOTAL=$(pdfinfo "$FILE" | grep "Pages" | awk '{print $2}')
 
 PAGES=$(zenity --entry --title="PDF към JPG" --text="Страници за експортиране (напр. 1-3,5,7 или all):")
+
+if [[ $? -ne 0 ]]; then
+	exit 0 # потребителят е натиснал Cancel или затворил прозореца
+fi
+
 PAGES=$(echo "$PAGES" | tr -d '[:space:]')  # премахва интервали
 
 if [[ -z "$PAGES" ]]; then
