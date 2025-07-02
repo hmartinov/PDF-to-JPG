@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [1.1.1] – 2025-07-02
+### Improvements:
+- Empty input for page selection now defaults to `"all"` – exporting all pages;
+- Added real PDF validation based on file content (magic header), not just extension;
+- Canceling the page selection dialog now properly exits the script instead of exporting all pages;
+
+### Fixed:
+- Version comparison is now accurate: `1.1.1` is correctly recognized as newer than `1.1`, preventing unnecessary downgrades;
+- Fixed temporary JPG file naming (`tmp_page.jpg` now handled safely with `-singlefile`);
+- Added check to ensure `pdftoppm` output exists before attempting to move the file.
+
+---
+
+---
+
 ## [1.1] – 2024-06-27  
 ### Added
 - Automated installation script (`install.sh`) for seamless setup
