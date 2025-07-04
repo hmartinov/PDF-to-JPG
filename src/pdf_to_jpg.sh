@@ -6,7 +6,9 @@ export LC_ALL=C.UTF-8
 VERSION="1.1.2"
 REPO_URL="https://raw.githubusercontent.com/hmartinov/PDF-to-JPG/main"
 SCRIPT_URL="https://github.com/hmartinov/PDF-to-JPG/releases/latest/download/pdf_to_jpg.sh"
+DESKTOP_URL="https://github.com/hmartinov/PDF-to-JPG/releases/latest/download/pdf-to-jpg.desktop"
 SCRIPT_PATH="$HOME/bin/pdf_to_jpg.sh"
+DESKTOP_PATH="$HOME/.local/share/applications/pdf-to-jpg.desktop"
 
 # Проверка за нова версия
 REMOTE_VERSION=$(curl -fs "$REPO_URL/version.txt" 2>/dev/null | tr -d '\r\n ')
@@ -24,14 +26,19 @@ version_is_newer() {
 }
 
 if [[ -n "$REMOTE_VERSION" ]] && version_is_newer "$VERSION" "$REMOTE_VERSION"; then
-    zenity --question \
-        --title="Налична е нова версия" \
-        --text="Имате версия $VERSION.\nНалична е нова версия: $REMOTE_VERSION\n\nИскате ли да я изтеглите сега?"
+    zenity --question         --title="Налична е нова версия"         --text="Имате версия $VERSION.\nНалична е нова версия: $REMOTE_VERSION\n\nИскате ли да я изтеглите сега?"
     if [[ $? -eq 0 ]]; then
         TMPFILE=$(mktemp)
         if curl -fsSL "$SCRIPT_URL" -o "$TMPFILE"; then
             mv "$TMPFILE" "$SCRIPT_PATH"
             chmod +x "$SCRIPT_PATH"
+            # Сваляне и на .desktop файла
+            TMPDESKTOP=$(mktemp)
+            if curl -fsSL "$DESKTOP_URL" -o "$TMPDESKTOP"; then
+                mkdir -p "$(dirname "$DESKTOP_PATH")"
+                mv "$TMPDESKTOP" "$DESKTOP_PATH"
+                chmod +x "$DESKTOP_PATH"
+            fi
             zenity --info --title="Обновено" --text="Скриптът беше обновен успешно до версия $REMOTE_VERSION."
             exec "$SCRIPT_PATH" "$@"
             exit 0
