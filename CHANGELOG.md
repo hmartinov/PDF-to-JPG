@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [1.1.2] – 2025-07-04
+
+### Changes:
+- Added automatic file picker: if no PDF file is provided, the script opens a Zenity dialog to manually select a file;
+- Improved filename warnings: filenames containing non-Latin characters or spaces now trigger a warning message;
+- Removed temporary debug logging (no more log file is created);
+- Ensured full compatibility with filenames containing spaces and non-Latin characters;
+- The recommended `.desktop` file configuration now uses a fixed absolute path with "%f" to guarantee proper file handling:
+  ```
+  Exec=/home/your_username/bin/pdf_to_jpg.sh "%f"
+  ```
+- The script remains compatible with both GUI launches and terminal use, working reliably in all cases.
+
+---
+
+---
+
 ## [1.1.1] – 2025-07-02
 ### Improvements:
 - Empty input for page selection now defaults to `"all"` – exporting all pages;
@@ -34,6 +51,8 @@ All notable changes to this project will be documented in this file.
 - Prevented re-export of existing pages
 - Improved user experience and error handling
 - Better layout and icon for desktop integration
+
+---
 
 ---
 
