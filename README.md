@@ -14,6 +14,7 @@ Designed for **Linux (Lubuntu/XFCE)** environments and optimized for office use 
 - Automatically checks for new version and updates from GitHub
 - Auto-closes when done — no terminal needed
 - Works from **right-click menu on PDF files**
+- Automatically downloads the app icon if missing and places it in the correct folder (`~/.local/share/icons/`).
 
 ## Requirements
 
