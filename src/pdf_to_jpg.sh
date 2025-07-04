@@ -9,6 +9,8 @@ SCRIPT_URL="https://github.com/hmartinov/PDF-to-JPG/releases/latest/download/pdf
 DESKTOP_URL="https://github.com/hmartinov/PDF-to-JPG/releases/latest/download/pdf-to-jpg.desktop"
 SCRIPT_PATH="$HOME/bin/pdf_to_jpg.sh"
 DESKTOP_PATH="$HOME/.local/share/applications/pdf-to-jpg.desktop"
+ICON_URL="https://github.com/hmartinov/PDF-to-JPG/releases/latest/download/pdf-to-jpg-icon.png"
+ICON_PATH="$HOME/.local/share/icons/pdf-to-jpg-icon.png"
 
 # Проверка за нова версия
 REMOTE_VERSION=$(curl -fs "$REPO_URL/version.txt" 2>/dev/null | tr -d '\r\n ')
@@ -46,6 +48,16 @@ if [[ -n "$REMOTE_VERSION" ]] && version_is_newer "$VERSION" "$REMOTE_VERSION"; 
             zenity --error --title="Грешка" --text="Неуспешно изтегляне на новата версия."
             rm -f "$TMPFILE"
         fi
+    fi
+fi
+
+# Сваляне на иконата, ако липсва локално
+if [[ ! -f "$ICON_PATH" ]]; then
+    TMPICON=$(mktemp)
+    if curl -fsSL "$ICON_URL" -o "$TMPICON"; then
+        mkdir -p "$(dirname "$ICON_PATH")"
+        mv "$TMPICON" "$ICON_PATH"
+        chmod +r "$ICON_PATH"
     fi
 fi
 

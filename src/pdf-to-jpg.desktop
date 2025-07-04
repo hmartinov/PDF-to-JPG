@@ -2,7 +2,7 @@
 Name=PDF to JPG (страници)
 Comment=Извличане на избрани страници от PDF в JPG
 Exec=/home/store/bin/pdf_to_jpg.sh
-Icon=application-pdf
+Icon=pdf-to-jpg-icon
 Terminal=false
 Type=Application
 MimeType=application/pdf;
