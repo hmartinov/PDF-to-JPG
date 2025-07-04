@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=PDF to JPG (страници)
 Comment=Извличане на избрани страници от PDF в JPG
-Exec=/bin/bash -c '$HOME/bin/pdf_to_jpg.sh %f'
+Exec=/home/store/bin/pdf_to_jpg.sh
 Icon=application-pdf
 Terminal=false
 Type=Application

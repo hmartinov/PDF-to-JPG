@@ -1,6 +1,9 @@
 #!/bin/bash
 
-VERSION="1.1.1"
+export LANG=C.UTF-8
+export LC_ALL=C.UTF-8
+
+VERSION="1.1.2"
 REPO_URL="https://raw.githubusercontent.com/hmartinov/PDF-to-JPG/main"
 SCRIPT_URL="https://github.com/hmartinov/PDF-to-JPG/releases/latest/download/pdf_to_jpg.sh"
 SCRIPT_PATH="$HOME/bin/pdf_to_jpg.sh"
@@ -17,7 +20,7 @@ version_is_newer() {
         if ((10#${ver2[i]} > 10#${ver1[i]})); then return 0; fi
         if ((10#${ver2[i]} < 10#${ver1[i]})); then return 1; fi
     done
-    return 1  # equal versions
+    return 1
 }
 
 if [[ -n "$REMOTE_VERSION" ]] && version_is_newer "$VERSION" "$REMOTE_VERSION"; then
@@ -54,10 +57,24 @@ if (( ${#MISSING[@]} > 0 )); then
     exit 1
 fi
 
-FILE="$1"
+# Вземане на файл – автоматично или чрез избор
+if [[ -z "$1" ]]; then
+    FILE=$(zenity --file-selection --title="Избери PDF файл")
+    if [[ -z "$FILE" ]]; then
+        zenity --error --title="Грешка" --text="Не е избран PDF файл."
+        exit 1
+    fi
+else
+    FILE="$1"
+fi
 
-if ! head -c 4 "$FILE" | grep -q "%PDF"; then 
-    zenity --error --title="Грешен формат" --text="Файлът не е валиден PDF документ."
+# Предупреждение за кирилица и интервали
+if [[ "$FILE" =~ [^[:ascii:]] || "$FILE" =~ [[:space:]] ]]; then
+    zenity --warning --title="Внимание за име на файл" --text="Името на файла съдържа нелатински символи или интервали.\n\nТова може да създаде проблеми при експортиране.\n\nПрепоръка: Преименувайте файла с латински букви и без интервали."
+fi
+
+if ! pdfinfo "$FILE" >/dev/null 2>&1; then
+    zenity --error --title="Грешен PDF формат" --text="Файлът не е валиден PDF документ."
     exit 1
 fi
 
@@ -66,10 +83,10 @@ TOTAL=$(pdfinfo "$FILE" | grep "Pages" | awk '{print $2}')
 PAGES=$(zenity --entry --title="PDF към JPG" --text="Страници за експортиране (напр. 1-3,5,7 или all):")
 
 if [[ $? -ne 0 ]]; then
-	exit 0 # потребителят е натиснал Cancel или затворил прозореца
+	exit 0
 fi
 
-PAGES=$(echo "$PAGES" | tr -d '[:space:]')  # премахва интервали
+PAGES=$(echo "$PAGES" | tr -d '[:space:]')
 
 if [[ -z "$PAGES" ]]; then
     PAGES="all"
@@ -191,7 +208,7 @@ elif (( EXPORTED == 0 && ${#SKIPPED[@]} > 0 )); then
     zenity --info --title="Няма нужда от действие" --text="$(echo -e "$MSG")"
 
 elif (( ${#INVALID[@]} > 0 )); then
-    MSG="⚠️ Невалидни страници (файлът има $TOTAL):\nВъведена грешна стойност: $RANGE_INVALID"
+    MSG="⚠️ Невалидни страници (файлът има $TOTAL):\n$RANGE_INVALID"
     zenity --error --title="Грешка" --text="$(echo -e "$MSG")"
 
 else
