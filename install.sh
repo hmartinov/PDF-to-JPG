@@ -43,7 +43,13 @@ cp "$DESKTOP_FILE" "$DESKTOP_DIR/"
 chmod +x "$INSTALL_DIR/$SCRIPT_NAME"
 chmod +x "$DESKTOP_DIR/$DESKTOP_FILE"
 
-# 6. Финално съобщение
+#6. Опресняване на менюто
+update-desktop-database "$DESKTOP_DIR"
+if command -v lxpanelctl >/dev/null 2>&1; then
+    lxpanelctl restart
+fi
+
+# 7. Финално съобщение
 echo
 echo "✅ Инсталацията приключи успешно!"
 echo "👉 Програмата вече е достъпна при отваряне на PDF файл с десен бутон."
