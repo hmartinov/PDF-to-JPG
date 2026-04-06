@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [1.1.3] – 2026-04-06
+
+### Fixed:
+- Fixed `Exec` line in `pdf-to-jpg.desktop` – added `%f` to pass the PDF file directly when opened via right-click
+- Fixed non-ASCII/space filename check – now only checks the filename (`basename`) instead of the full path
+- Fixed `install.sh` – now uses correct package names (`poppler-utils` instead of `pdftoppm`/`pdfinfo`)
+- `apt-get update` is now called only once before installing all missing packages
+- Added check for required files before copying during installation
+- Fixed permissions on `pdf-to-jpg.desktop` – `chmod 644` instead of `chmod +x`
+- Added `update-desktop-database` call after installation
+
+---
+
+---
+
 ## [1.1.2] – 2025-07-04
 
 ### Changes:
