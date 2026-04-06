@@ -17,8 +17,6 @@ All notable changes to this project will be documented in this file.
 
 ---
 
----
-
 ## [1.1.2] – 2025-07-04
 
 ### Changes:
@@ -34,8 +32,6 @@ All notable changes to this project will be documented in this file.
 
 ---
 
----
-
 ## [1.1.1] – 2025-07-02
 ### Improvements:
 - Empty input for page selection now defaults to `"all"` – exporting all pages;
@@ -46,8 +42,6 @@ All notable changes to this project will be documented in this file.
 - Version comparison is now accurate: `1.1.1` is correctly recognized as newer than `1.1`, preventing unnecessary downgrades;
 - Fixed temporary JPG file naming (`tmp_page.jpg` now handled safely with `-singlefile`);
 - Added check to ensure `pdftoppm` output exists before attempting to move the file.
-
----
 
 ---
 
@@ -66,8 +60,6 @@ All notable changes to this project will be documented in this file.
 - Prevented re-export of existing pages
 - Improved user experience and error handling
 - Better layout and icon for desktop integration
-
----
 
 ---
 
