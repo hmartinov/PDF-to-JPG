@@ -3,7 +3,7 @@
 export LANG=C.UTF-8
 export LC_ALL=C.UTF-8
 
-VERSION="1.1.2"
+VERSION="1.1.3"
 REPO_URL="https://raw.githubusercontent.com/hmartinov/PDF-to-JPG/main"
 SCRIPT_URL="https://github.com/hmartinov/PDF-to-JPG/releases/latest/download/pdf_to_jpg.sh"
 DESKTOP_URL="https://github.com/hmartinov/PDF-to-JPG/releases/latest/download/pdf-to-jpg.desktop"
@@ -77,7 +77,7 @@ if (( ${#MISSING[@]} > 0 )); then
 fi
 
 # Вземане на файл – автоматично или чрез избор
-if [[ -z "$1" ]]; then
+if [[ -z "$1" || "$1" == "%f" || "$1" == "%F" ]]; then
     FILE=$(zenity --file-selection --title="Избери PDF файл")
     if [[ -z "$FILE" ]]; then
         zenity --error --title="Грешка" --text="Не е избран PDF файл."
